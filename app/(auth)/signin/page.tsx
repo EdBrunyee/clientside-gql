@@ -5,13 +5,22 @@ import { Button, Input } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useMutation } from 'urql'
+import { SigninMutation } from '@/gql/signinMutation'
 
 const SigninPage = () => {
   const [state, setState] = useState({ password: '', email: '' })
   const router = useRouter()
+  const [signinResult, signin] = useMutation(SigninMutation)
 
   const handleSignin = async (e) => {
     e.preventDefault()
+
+    const data = await signin({ input: state})
+
+    if (data.data.signin) {
+      setToken(data.data.signin.token)
+      router.push('/')
+    }
   }
 
   return (
